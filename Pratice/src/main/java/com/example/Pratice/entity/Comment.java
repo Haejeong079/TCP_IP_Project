@@ -33,7 +33,7 @@ public class Comment {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String comment;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", updatable = false)
     @CreatedDate
     private String createDate;
 

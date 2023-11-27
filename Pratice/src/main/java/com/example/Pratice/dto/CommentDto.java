@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -22,6 +23,7 @@ public class CommentDto {
     private String comment;
     private String createDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
     private String modifiedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));;
+    private List<Comment> comments;
 
     /* DTO -> Entity */
     public Comment toEntity(){

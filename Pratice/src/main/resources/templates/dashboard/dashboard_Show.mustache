@@ -68,15 +68,47 @@
                 </div>
             {{/boardlist}}
 
-                <!-- 댓글 작성 폼 -->
-            <form action="/dashboard/{{boardlist.nickname}}/{{id}}/comment" method="post">
-                <div class="mb-3">
-                    <label for="comment" class="form-label">댓글 작성</label>
-                    <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+            <!-- 댓글 리스트 -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="bi bi-chat-dots"></span>
+                    {{#request.param.comments}}{{comments.size}}{{/request.param.comments}} Comments
                 </div>
-                <button type="submit" class="btn btn-primary">댓글 작성</button>
-            </form>
-            
+
+                <!-- 댓글내용 -->
+                <ul class="list-group-flush">
+                    {{#comments}}
+                        <li class="list-group-item">
+            <span>
+                <span style="font-size: small">{{nickname}}</span>
+                <span style="font-size: xx-small">{{createDate}}</span>&nbsp;
+                <span class="badge bi bi-pencil-square">수정</span>
+                <span class="badge bi bi-trash">삭제</span>
+            </span>
+                            <div>{{comment}}</div>
+                        </li>
+                    {{/comments}}
+                </ul>
+            </div>
+
+
+            <!-- 댓글 작성 폼 -->
+            <div class="card">
+                <div class="card-header bi bi-chat-right-dots">Write a Comment</div>
+                <!-- 댓글 작성 부분 -->
+                <form action="/dashboard/{{boardlist.nickname}}/{{id}}/comment" method="post">
+                <div class="card-body">
+                    {{#user}}
+                        <textarea name="comment" id="comment" class="form-control" rows="4" placeholder="댓글을 입력하세요"></textarea>
+                    </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-outline-primary bi bi-pencil-square"> 등록</button>
+                        </div>
+                    {{/user}}
+                </form>
+
+
+            </div>
         </div>
     </section>
 
