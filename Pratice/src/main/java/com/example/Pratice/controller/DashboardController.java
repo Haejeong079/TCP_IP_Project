@@ -1,0 +1,183 @@
+package com.example.Pratice.controller;
+
+
+import com.example.Pratice.dto.BoardDto;
+import com.example.Pratice.entity.DashBoard;
+import com.example.Pratice.entity.Member;
+import com.example.Pratice.repository.BoardRepository;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.websocket.Session;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+@Controller
+@Slf4j
+public class DashboardController {
+
+
+    @Autowired
+    private BoardRepository boardRepository;
+
+    // 대시보드 메인 페이지
+    @GetMapping("/dashboard")
+    public String dashboard(HttpSession session, Model model) {
+        Member user = (Member) session.getAttribute("user");
+        //model.addAttribute("user", user.getNickname());
+
+        // 모든 dashboard를 들고온다 !
+        List<DashBoard> dashboardEntityList = boardRepository.findAll();
+
+        model.addAttribute("boardlist", dashboardEntityList);
+        if (user != null) {
+            model.addAttribute("isLoggedIn", true);
+            model.addAttribute("user", user.getNickname());
+            log.info(user.getNickname() + " 님 께서 로그인하셨습니다.");
+
+
+            //model.addAttribute("boardlist", dashboardEntityList);
+
+        } else {
+            model.addAttribute("isLoggedIn", false);
+        }
+
+        return "dashboard/dashboard";
+    }
+
+    // 대시보드 생성 페이지
+    @GetMapping("dashboard/new")
+    public String newDashboard(HttpSession session, Model model) {
+        // 세션에서 사용자 정보 가져오기
+        Member user = (Member) session.getAttribute("user");
+
+        // 사용자 정보를 모델에 추가
+        model.addAttribute("isLoggedIn", user != null);
+        model.addAttribute("user", user != null ? user.getNickname() : null);
+
+        return "dashboard/dashboard_New";
+    }
+
+    @PostMapping("/dashboard/create")
+    public String newDashboardForm(HttpSession session, BoardDto Bdto) {
+        Member user = (Member) session.getAttribute("user");
+        Bdto.setNickname(user.getNickname());
+        Bdto.setUploadDate(LocalDate.now());
+
+        log.info(Bdto.toString());
+
+        DashBoard dashBoard = Bdto.toEntity();
+        log.info(dashBoard.toString());
+
+        // 중복 검사를 하지 않고 바로 저장
+        DashBoard saved = boardRepository.save(dashBoard);
+        log.info(saved.toString());
+
+
+        return "redirect:/dashboard/" + saved.getNickname() + "/" + saved.getId();
+    }
+
+
+    // 대시보드 생성후 사용자 닉네임값 / 아이디(게시물 순서) 로 지정한 주소
+    @GetMapping("/dashboard/{nickname}/{id}")
+    public String showBoard(@PathVariable String nickname, @PathVariable Long id, HttpSession session, Model model) {
+        Member user = (Member) session.getAttribute("user");
+
+        // id와 nickname을 기반으로 DashBoardEntity를 검색
+        DashBoard dashBoardEntity = boardRepository.findByIdAndNickname(id, nickname);
+
+        if (dashBoardEntity == null) {
+            // 대시보드 엔터티가 없을 경우 예외 처리 또는 적절한 로직을 수행
+            // 예: model.addAttribute("error", "대시보드를 찾을 수 없음");
+            return "errorPage"; // 에러 페이지로 이동하거나 다른 적절한 처리 수행
+        }
+
+        // 현재 로그인한 사용자와 게시글 작성자를 비교하여 isAuthor 플래그를 설정
+        boolean isAuthor = user != null && user.getNickname().equals(nickname);
+
+        model.addAttribute("isLoggedIn", true);
+        model.addAttribute("user", user != null ? user.getNickname() : null);
+        model.addAttribute("boardlist", dashBoardEntity);
+        model.addAttribute("isAuthor", isAuthor);
+
+        return "dashboard/dashboard_Show";
+    }
+
+
+    // 게시물 update (수정) controller
+    @GetMapping("/dashboard/{nickname}/{id}/edit")
+    public String edit(@PathVariable String nickname, @PathVariable Long id, Model model,HttpSession session) {
+        Member user = (Member) session.getAttribute("user");
+        model.addAttribute("isLoggedIn", true);
+        model.addAttribute("user", user.getNickname());
+
+        // 수정할 게시글 데이터 가져오기
+        DashBoard dashBoard = boardRepository.findByNicknameAndId(nickname, id);
+
+        if (dashBoard == null) {
+            // 게시글이 존재하지 않을 경우 처리
+            return "redirect:/"; // 또는 적절한 에러 페이지로 리다이렉트
+        }
+
+        model.addAttribute("editDashboard", dashBoard);
+
+        return "dashboard/dashboard_Edit";
+    }
+
+    @PostMapping("dashboard/update")
+    public String update(BoardDto boardDto, HttpSession session, Model model) {
+        Member user = (Member) session.getAttribute("user");
+        model.addAttribute("isLoggedIn", true);
+        model.addAttribute("user", user.getNickname());
+
+        // 1: 기존 엔티티를 가져온다.
+        Optional<DashBoard> optionalBoardEntity = boardRepository.findById(boardDto.getId());
+
+        if (optionalBoardEntity.isPresent()) {
+            DashBoard existingBoard = optionalBoardEntity.get();
+
+            // 2: 엔티티의 제목과 내용을 업데이트한다.
+            existingBoard.setTitle(boardDto.getTitle());
+            existingBoard.setContent(boardDto.getContent());
+
+            // 3: DB에 업데이트된 엔티티를 저장한다.
+            boardRepository.save(existingBoard);
+        }
+
+        return "redirect:/dashboard/" + boardDto.getNickname() + "/" + boardDto.getId();
+    }
+
+    // 게시물 삭제
+    @GetMapping("/dashboard/{nickname}/{id}/delete")
+    public String Delete(HttpSession session, @PathVariable Long id,
+                         @PathVariable String nickname, RedirectAttributes rttr,
+                         Model model){
+        Member user = (Member) session.getAttribute("user");
+        model.addAttribute("isLoggedIn", true);
+        model.addAttribute("user", user.getNickname());
+
+        DashBoard target = boardRepository.findByIdAndNickname(id, nickname);
+        rttr.addFlashAttribute("msg","삭제가 완료되었습니다!");
+
+        if(target != null){
+            boardRepository.delete(target);
+        }
+
+        return"redirect:/dashboard";
+    }
+
+
+
+
+
+}
