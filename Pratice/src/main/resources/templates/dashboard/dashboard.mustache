@@ -89,5 +89,18 @@
         }
     }
 </script>
+<script>
+    var isLoggedIn = {{isLoggedIn}};
+
+    // 페이지 로딩 시 실행되는 함수
+    window.onload = function() {
+        if (!isLoggedIn) {
+            // 로그인되지 않은 경우 경고창 띄우기
+            alert('로그인후 게시판을 이용하여 주세요');
+
+
+        }
+    };
+</script>
 </body>
 </html>
