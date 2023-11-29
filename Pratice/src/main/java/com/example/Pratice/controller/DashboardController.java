@@ -2,9 +2,12 @@ package com.example.Pratice.controller;
 
 
 import com.example.Pratice.dto.BoardDto;
+import com.example.Pratice.dto.CommentDto;
+
 import com.example.Pratice.entity.DashBoard;
 import com.example.Pratice.entity.Member;
 import com.example.Pratice.repository.BoardRepository;
+import com.example.Pratice.service.CommentService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.websocket.Session;
@@ -29,6 +32,9 @@ public class DashboardController {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private CommentService commentService;
 
     // 대시보드 메인 페이지
     @GetMapping("/dashboard")
@@ -92,26 +98,28 @@ public class DashboardController {
     @GetMapping("/dashboard/{nickname}/{id}")
     public String showBoard(@PathVariable String nickname, @PathVariable Long id, HttpSession session, Model model) {
         Member user = (Member) session.getAttribute("user");
-
-        // id와 nickname을 기반으로 DashBoardEntity를 검색
         DashBoard dashBoardEntity = boardRepository.findByIdAndNickname(id, nickname);
+        List<CommentDto> comments = commentService.comments(id);
 
         if (dashBoardEntity == null) {
-            // 대시보드 엔터티가 없을 경우 예외 처리 또는 적절한 로직을 수행
-            // 예: model.addAttribute("error", "대시보드를 찾을 수 없음");
-            return "errorPage"; // 에러 페이지로 이동하거나 다른 적절한 처리 수행
+            // 적절한 에러 처리
+            return "errorPage";
         }
 
-        // 현재 로그인한 사용자와 게시글 작성자를 비교하여 isAuthor 플래그를 설정
+
+
         boolean isAuthor = user != null && user.getNickname().equals(nickname);
 
         model.addAttribute("isLoggedIn", true);
         model.addAttribute("user", user != null ? user.getNickname() : null);
         model.addAttribute("boardlist", dashBoardEntity);
         model.addAttribute("isAuthor", isAuthor);
+        model.addAttribute("comments",comments);
+
 
         return "dashboard/dashboard_Show";
     }
+
 
 
     // 게시물 update (수정) controller

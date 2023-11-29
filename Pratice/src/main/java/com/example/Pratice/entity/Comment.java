@@ -30,6 +30,9 @@ public class Comment {
     @JoinColumn(name="nickname_id")
     private Member member;
 
+    @Column
+    private String nickname;
+
     @Column(columnDefinition = "TEXT", nullable = false)
     private String comment;
 
@@ -40,5 +43,6 @@ public class Comment {
     @Column(name = "modified_date")
     @LastModifiedDate
     private String modifiedDate;
+
 
 }

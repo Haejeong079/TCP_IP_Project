@@ -7,12 +7,15 @@ import com.example.Pratice.entity.Member;
 import com.example.Pratice.repository.BoardRepository;
 import com.example.Pratice.repository.CommentRepository;
 import com.example.Pratice.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -29,23 +32,18 @@ public class CommentService {
     }
 
     public CommentDto findById(Long id) {
-        CommentDto commentDto = new CommentDto();
-
-        // CommentRepository를 사용하여 댓글을 조회하고 CommentDto에 설정
-        List<Comment> comments = commentRepository.findByDashBoard_Id(id);
-
-        // 나머지 코드는 그대로 유지
-        commentDto.setComments(comments);
-
-        return commentDto;
+        return comments(id).stream()
+                .findFirst()
+                .orElse(null); // 첫 번째 CommentDto를 반환하거나, 없으면 null 반환
     }
+
 
 
     public void addComment(String commentText, String nickname, Long id, SessionUser sessionUser) {
         // 시간 설정 코드
         String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        Member member = memberRepository.findByNickname(nickname)
+        Member member = UserRepository.findByNickname(nickname)
                 .orElseThrow(() -> new RuntimeException("해당 닉네임의 사용자를 찾을 수 없습니다."));
 
         DashBoard dashboard = dashboardRepository.findById(id)
@@ -61,5 +59,16 @@ public class CommentService {
 
         commentRepository.save(comment);
     }
+
+    public List<CommentDto> comments(Long Dashboardid) {
+
+        // 반환
+        return commentRepository.findByDashBoard_Id(Dashboardid) // commentRepository에 목록조회
+                .stream() // stream으로 변경
+                .map(CommentDto::createCommentDto) //createCommentDto를 통해 comment를 하나하나전달하여 DTO로 변환
+                .collect(Collectors.toList()); // map이 반환하는 값이 stream<Object>이기 때문에
+    }
+
+
 
 }
