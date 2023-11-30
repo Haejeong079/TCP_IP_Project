@@ -60,13 +60,10 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public List<CommentDto> comments(Long Dashboardid) {
-
-        // 반환
-        return commentRepository.findByDashBoard_Id(Dashboardid) // commentRepository에 목록조회
-                .stream() // stream으로 변경
-                .map(CommentDto::createCommentDto) //createCommentDto를 통해 comment를 하나하나전달하여 DTO로 변환
-                .collect(Collectors.toList()); // map이 반환하는 값이 stream<Object>이기 때문에
+    public List<CommentDto> comments(Long dashboardId) {
+        return commentRepository.findByDashBoard_Id(dashboardId).stream()
+                .map(comment -> new CommentDto(comment.getComment()))
+                .collect(Collectors.toList());
     }
 
 

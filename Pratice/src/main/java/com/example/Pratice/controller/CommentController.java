@@ -41,7 +41,7 @@ public class CommentController {
         commentService.addComment(comment, nickname, id, sessionUser);
 
         // 댓글 조회
-        List<Comment> comments = commentService.findById(id).getComments();
+        String comments = commentService.findById(id).getComment();
 
         // 모델에 추가
         model.addAttribute("comments", comments);

@@ -12,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class CommentListDto {
-    private List<CommentDto> comments;
+    private String comment;
 }
 

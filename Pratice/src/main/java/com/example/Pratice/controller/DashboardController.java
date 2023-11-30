@@ -4,6 +4,7 @@ package com.example.Pratice.controller;
 import com.example.Pratice.dto.BoardDto;
 import com.example.Pratice.dto.CommentDto;
 
+
 import com.example.Pratice.entity.DashBoard;
 import com.example.Pratice.entity.Member;
 import com.example.Pratice.repository.BoardRepository;
@@ -15,9 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -96,10 +95,12 @@ public class DashboardController {
 
     // 대시보드 생성후 사용자 닉네임값 / 아이디(게시물 순서) 로 지정한 주소
     @GetMapping("/dashboard/{nickname}/{id}")
-    public String showBoard(@PathVariable String nickname, @PathVariable Long id, HttpSession session, Model model) {
+    public String showBoard(@PathVariable String nickname,
+                            @PathVariable Long id, HttpSession session, Model model) {
         Member user = (Member) session.getAttribute("user");
         DashBoard dashBoardEntity = boardRepository.findByIdAndNickname(id, nickname);
-        List<CommentDto> comments = commentService.comments(id);
+
+        List<CommentDto> comments = commentService.comments(id); // 댓글 리스트 가져오기
 
         if (dashBoardEntity == null) {
             // 적절한 에러 처리
@@ -115,6 +116,7 @@ public class DashboardController {
         model.addAttribute("boardlist", dashBoardEntity);
         model.addAttribute("isAuthor", isAuthor);
         model.addAttribute("comments",comments);
+
 
 
         return "dashboard/dashboard_Show";

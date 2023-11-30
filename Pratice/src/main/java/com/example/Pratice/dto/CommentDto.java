@@ -20,21 +20,17 @@ public class CommentDto {
     private String comment;
     private String createDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
     private String modifiedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));;
-    private List<Comment> comments;
+    //private List<Comment> comments;
 
-    public CommentDto(Long id, Long dashboardId, String nickname, String comment) {
+
+    public CommentDto(String comment) {
+        this.comment = comment;
     }
 
 
 
-    public static CommentDto createCommentDto(Comment comment) {
-        return new CommentDto(
-                comment.getId(),
-                comment.getDashBoard().getId(),
-                comment.getMember().getNickname(), // Member의 닉네임 가져오기
-                comment.getComment()
-        );
-    }
+
+
 
 
 
