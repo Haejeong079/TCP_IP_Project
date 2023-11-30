@@ -14,9 +14,9 @@ public interface UserRepository extends JpaRepository<Member,Long> {
 
     Optional<Member> findByEmail(String email);
 
-    static Optional<Member> findByNickname(String nickname) {
-        return null;
-    }
+    Optional<Member> findByNickname(String nickname);
+
+
 
 
 

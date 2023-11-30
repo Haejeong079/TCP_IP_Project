@@ -43,8 +43,11 @@ public class CommentService {
         // 시간 설정 코드
         String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        Member member = UserRepository.findByNickname(nickname)
-                .orElseThrow(() -> new RuntimeException("해당 닉네임의 사용자를 찾을 수 없습니다."));
+        Optional<Member> memberOptional = memberRepository.findByNickname(nickname);
+        if (!memberOptional.isPresent()) {
+            throw new RuntimeException("해당 닉네임의 사용자를 찾을 수 없습니다.");
+        }
+        Member member = memberOptional.get();
 
         DashBoard dashboard = dashboardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 대시보드를 찾을 수 없습니다."));

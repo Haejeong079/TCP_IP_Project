@@ -30,23 +30,4 @@ public class CommentDto {
 
 
 
-
-
-
-
-    /* DTO -> Entity */
-    public Comment toEntity(){
-        Comment comments = Comment.builder()
-                .id(id)
-                .comment(comment)
-                .createDate(createDate)
-                .modifiedDate(modifiedDate)
-                .member(member)
-                .dashBoard(dashBoard)
-                .build();
-
-        return comments;
-    }
-
-
 }
