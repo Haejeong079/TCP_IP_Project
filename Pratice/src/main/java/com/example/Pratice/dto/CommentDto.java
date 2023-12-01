@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 public class CommentDto {
     private Long id;
+    private String memberNickname;
     private DashBoard dashBoard;
     private Member member;
     private String comment;
@@ -26,8 +27,5 @@ public class CommentDto {
     public CommentDto(String comment) {
         this.comment = comment;
     }
-
-
-
 
 }

@@ -8,4 +8,6 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment,Long> {
 
     List<Comment> findByDashBoard_Id(Long id);
+
+    void deleteByDashBoard_Id(Long dashboardId);
 }

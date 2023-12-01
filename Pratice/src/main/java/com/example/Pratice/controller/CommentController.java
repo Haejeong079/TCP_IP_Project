@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -29,30 +30,33 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+
     @PostMapping("/{nickname}/{id}/comment")
     public String addComment(@RequestParam("comment") String comment,
                              @PathVariable("nickname") String nickname,
                              @PathVariable("id") Long id,
                              Model model,
                              HttpSession session) {
-        // 댓글 추가 or 세션을 가져오기
+        // 현재 로그인한 사용자를 세션에서 가져오기
         Member user = (Member) session.getAttribute("user");
-        SessionUser sessionUser = new SessionUser(user);
-        commentService.addComment(comment, nickname, id, sessionUser);
 
-        // 댓글 조회
         String comments = commentService.findById(id).getComment();
 
-        // 모델에 추가
-        model.addAttribute("comments", comments);
-        model.addAttribute("nickname", nickname);
-        model.addAttribute("id", id);
+        if (user == null) {
+            // 사용자가 로그인하지 않은 경우 에러 처리
+            // 예: 로그인 페이지로 리다이렉트
+            return "redirect:/login";
+        }
 
-        return "redirect:/dashboard/{nickname}/{id}";
+        // 댓글 추가
+        commentService.addComment(comment, id, user);
+
+        model.addAttribute("comments", comments);
+
+        // 리다이렉트 URL은 현재 보고 있는 게시글로
+        return "redirect:/dashboard/" + nickname + "/" + id;
     }
 
 
+
 }
-
-
-

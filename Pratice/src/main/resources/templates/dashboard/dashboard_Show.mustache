@@ -48,8 +48,9 @@
     <section class="dashboard-list">
 <!--        <h2 class="text-center mb-4">자유 게시판</h2>-->
         <a href="/dashboard" class="btn btn-primary">Go to Dashboard List</a>
-        <a id="editBtn" href="/dashboard/{{boardlist.nickname}}/{{id}}/edit" class="btn btn-warning">게시글 수정</a>
+        <a id="editBtn" href="/dashboard/{{user}}/{{id}}/edit" class="btn btn-warning">게시글 수정</a>
         <button id="deleteBtn" type="button" class="btn btn-danger" onclick="confirmDelete('{{boardlist.nickname}}', {{id}})">게시글 삭제 !</button>
+
         <div class="container mb-4">
             {{#boardlist}}
                 <div class="card mb-3">
@@ -72,7 +73,7 @@
             <div class="card">
                 <div class="card-header">
                     <span class="bi bi-chat-dots"></span>
-                     Comments
+                    Comments
                 </div>
 
                 <!-- 댓글내용 -->
@@ -98,20 +99,23 @@
                 <div class="card-header bi bi-chat-right-dots">Write a Comment</div>
                 <!-- 댓글 작성 부분 -->
                 <form action="/dashboard/{{boardlist.nickname}}/{{id}}/comment" method="post">
-                <div class="card-body">
-                    {{#user}}
-                        <textarea name="comment" id="comment" class="form-control" rows="4" placeholder="댓글을 입력하세요"></textarea>
+                    <div class="card-body">
+                        {{#user}}
+                            <textarea name="comment" id="comment" class="form-control" rows="4" placeholder="댓글을 입력하세요"></textarea>
+                        {{/user}}
                     </div>
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-outline-primary bi bi-pencil-square"> 등록</button>
-                        </div>
-                    {{/user}}
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-outline-primary bi bi-pencil-square"> 등록</button>
+                    </div>
                 </form>
-
-
             </div>
+
+
+
         </div>
     </section>
+
+
 
 <!-- Bootstrap JavaScript (jQuery and Popper.js required) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

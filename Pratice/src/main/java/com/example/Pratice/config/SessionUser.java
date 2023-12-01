@@ -8,12 +8,14 @@ import java.io.Serializable;
 
 @Getter
 public class SessionUser implements Serializable {
+    private Long id;      // 사용자의 고유 ID
     private String nickname;
     private String email;
 
     public SessionUser(Member user) {
-        this.nickname = user.getNickname(); // 또는 getName()에 해당하는 메서드로 수정
+
+        this.id = user.getId();           // Member의 ID를 저장
+        this.nickname = user.getNickname();
         this.email = user.getEmail();
     }
-
 }

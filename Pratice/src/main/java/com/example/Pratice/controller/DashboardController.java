@@ -8,6 +8,7 @@ import com.example.Pratice.dto.CommentDto;
 import com.example.Pratice.entity.DashBoard;
 import com.example.Pratice.entity.Member;
 import com.example.Pratice.repository.BoardRepository;
+import com.example.Pratice.service.BoardService;
 import com.example.Pratice.service.CommentService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -34,6 +35,9 @@ public class DashboardController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private BoardService boardService; // BoardService 인스턴스 주입
 
     // 대시보드 메인 페이지
     @GetMapping("/dashboard")
@@ -94,6 +98,7 @@ public class DashboardController {
 
 
     // 대시보드 생성후 사용자 닉네임값 / 아이디(게시물 순서) 로 지정한 주소
+
     @GetMapping("/dashboard/{nickname}/{id}")
     public String showBoard(@PathVariable String nickname,
                             @PathVariable Long id, HttpSession session, Model model) {
@@ -102,12 +107,10 @@ public class DashboardController {
 
         List<CommentDto> comments = commentService.comments(id); // 댓글 리스트 가져오기
 
-        if (dashBoardEntity == null) {
+//        if (dashBoardEntity == null) {
             // 적절한 에러 처리
-            return "errorPage";
-        }
-
-
+//            return "errorPage";
+//        }
 
         boolean isAuthor = user != null && user.getNickname().equals(nickname);
 
@@ -116,8 +119,6 @@ public class DashboardController {
         model.addAttribute("boardlist", dashBoardEntity);
         model.addAttribute("isAuthor", isAuthor);
         model.addAttribute("comments",comments);
-
-
 
         return "dashboard/dashboard_Show";
     }
@@ -167,24 +168,22 @@ public class DashboardController {
         return "redirect:/dashboard/" + boardDto.getNickname() + "/" + boardDto.getId();
     }
 
-    // 게시물 삭제
     @GetMapping("/dashboard/{nickname}/{id}/delete")
     public String Delete(HttpSession session, @PathVariable Long id,
                          @PathVariable String nickname, RedirectAttributes rttr,
-                         Model model){
+                         Model model) {
         Member user = (Member) session.getAttribute("user");
         model.addAttribute("isLoggedIn", true);
         model.addAttribute("user", user.getNickname());
 
-        DashBoard target = boardRepository.findByIdAndNickname(id, nickname);
-        rttr.addFlashAttribute("msg","삭제가 완료되었습니다!");
+        // 서비스 레이어의 삭제 메소드 호출
+        boardService.deleteDashBoard(id, nickname);
 
-        if(target != null){
-            boardRepository.delete(target);
-        }
+        rttr.addFlashAttribute("msg", "삭제가 완료되었습니다!");
 
-        return"redirect:/dashboard";
+        return "redirect:/dashboard";
     }
+
 
 
 
