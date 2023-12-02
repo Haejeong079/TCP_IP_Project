@@ -1,4 +1,5 @@
 # Tcp Ip Term project 
+# Release notes
 
 주제 : 게시판
 
@@ -11,7 +12,8 @@
 - 게시판 수정(Update)
 - 게시판 삭제 (delete)
 
+- 댓글 업로드 (Create)
+- 댓글 읽기 (read)
+
 # 추가될 기능
 - 댓글관리 서비스
-- 댓글 업로드 및 수정, 삭제 기능
- 

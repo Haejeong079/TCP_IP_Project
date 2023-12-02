@@ -48,7 +48,7 @@
     <section class="dashboard-list">
 <!--        <h2 class="text-center mb-4">자유 게시판</h2>-->
         <a href="/dashboard" class="btn btn-primary">Go to Dashboard List</a>
-        <a id="editBtn" href="/dashboard/{{user}}/{{id}}/edit" class="btn btn-warning">게시글 수정</a>
+        <a id="editBtn" href="/dashboard/{{boardlist.nickname}}/{{id}}/edit" class="btn btn-warning">게시글 수정</a>
         <button id="deleteBtn" type="button" class="btn btn-danger" onclick="confirmDelete('{{boardlist.nickname}}', {{id}})">게시글 삭제 !</button>
 
         <div class="container mb-4">

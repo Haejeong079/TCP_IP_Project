@@ -108,7 +108,7 @@ public class DashboardController {
         List<CommentDto> comments = commentService.comments(id); // 댓글 리스트 가져오기
 
 //        if (dashBoardEntity == null) {
-            // 적절한 에러 처리
+        // 적절한 에러 처리
 //            return "errorPage";
 //        }
 
