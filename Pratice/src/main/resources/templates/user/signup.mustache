@@ -5,39 +5,44 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="/static/css/signup2.css" rel="stylesheet">
-
-
-
     <title>회원가입</title>
 </head>
 <body>
+<div class="form-container">
+    <form action="/signup" method="post" class="w-50">
+        <h1 class="text-center mb-4">회원가입</h1>
+
+        <!-- 닉네임 입력 필드 -->
+        <div class="form-group mb-3">
+            <input type="text" name="nickname" id="nickname" placeholder="Write Nickname" class="form-control">
+        </div>
+
+        <!-- 이메일 입력 필드와 중복 검사 버튼 -->
+        <div class="row mb-3">
+            <div class="col">
+                <input type="email" name="email" id="email" placeholder="Email" class="form-control">
+            </div>
+            <div class="col-auto">
+                <button type="button" id="emailDuplicateButton" class="btn btn-success" onclick="checkEmail()">이메일 중복 검사</button>
+            </div>
+        </div>
+
+        <!-- 비밀번호 입력 필드 -->
+        <div class="form-group mb-3">
+            <input type="password" name="password" id="password" placeholder="Password" class="form-control">
+        </div>
+
+        <!-- 회원가입 버튼 -->
+        <button type="submit" id="signupButton" class="btn btn-outline-primary w-100" disabled onclick="showSuccessModal()">회원가입</button>
+        {{#error}}
+            <div id="duplicateMessage" class="alert alert-danger mt-2">
+                {{errormessage}}
+            </div>
+        {{/error}}
+        <div id="check-result-message" class="mt-2" style="display: none;"></div>
+    </form>
+</div>
 
 <script src="/static/js/sign_up2.js"></script>
-
-<h1>회원가입</h1>
-<form action="/signup" method="post">
-    <div class="input-group mb-3">
-        <input type="text" name="nickname" id="nickname" placeholder="Write Nickname"><br>
-        <input type="email" name="email" id="email" placeholder="Email" class="form-control"><br>
-        <p id="check-result"></p>
-        <div class="input-group-append">
-            <button type="button" id="emailDuplicateButton" class="btn btn-primary" onclick="checkEmail()">이메일 중복 검사</button>
-        </div>
-    </div>
-
-    <input type="password" name="password" id="password" placeholder="Password">
-    <button type="submit" id="signupButton" disabled onclick="showSuccessModal()">회원가입</button>
-    <!-- <div id="check-result-message" style="display: none;"> -->
-        {{#error}}
-            <!-- <span style="color: red;">이메일과 비밀번호를 모두 입력하세요.</span> -->
-            <div id="duplicateMessage" class="alert alert-danger">
-            {{errormessage}}
-        {{/error}}
-    </div>
-
-
-    <!-- 중복 체크 결과를 표시할 엘리먼트 -->
-    <div id="check-result-message" style="display: none;"></div>
-</form>
 </body>
 </html>

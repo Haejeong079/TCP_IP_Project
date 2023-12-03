@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <title>Insert title here</title>
     <link rel='stylesheet' type='text/css' href="/static/css/chat.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
 <div id="chatt">
-    <h1>WebSocket Chatting</h1>
-    <input type="text" id="mid" value="홍길동">
-    <input type="button" value="로그인" id="btnLogin">
+    <h1>Chatting</h1>
+    <input type="text" id="mid" value="{{nickname}}">
+    <input type="button" class="btn btn-outline-secondary" value="닉네임 등록" id="btnLogin">
     <br/>
     <div id="talk"></div>
     <div id="sendZone">
         <textarea id="msg" value="hi..."></textarea>
-        <input type=button value="전송" id="btnSend">
+        <input type=button class="btn btn-outline-secondary" value="전송" id="btnSend">
     </div>
 </div>
 <script src="/static/js/chatt.js"></script>
