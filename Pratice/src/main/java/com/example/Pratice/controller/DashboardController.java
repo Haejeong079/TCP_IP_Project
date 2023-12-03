@@ -105,20 +105,23 @@ public class DashboardController {
         Member user = (Member) session.getAttribute("user");
         DashBoard dashBoardEntity = boardRepository.findByIdAndNickname(id, nickname);
 
+        boolean isAuthor = user != null && user.getNickname().equals(nickname);
+        // 조회수 업데이트
+        if (dashBoardEntity != null) {
+            dashBoardEntity.setViewCount(dashBoardEntity.getViewCount() + 1);
+            boardRepository.save(dashBoardEntity); // 조회수 변경을 데이터베이스에 저장
+        }
+
         List<CommentDto> comments = commentService.comments(id); // 댓글 리스트 가져오기
 
-//        if (dashBoardEntity == null) {
-        // 적절한 에러 처리
-//            return "errorPage";
-//        }
-
-        boolean isAuthor = user != null && user.getNickname().equals(nickname);
-
+        model.addAttribute("viewCount", dashBoardEntity.getViewCount());
+        model.addAttribute("commentCount", dashBoardEntity.getCommentCount());
         model.addAttribute("isLoggedIn", true);
         model.addAttribute("user", user != null ? user.getNickname() : null);
         model.addAttribute("boardlist", dashBoardEntity);
         model.addAttribute("isAuthor", isAuthor);
-        model.addAttribute("comments",comments);
+        model.addAttribute("comments", comments); // 여기서 comments는 CommentDto 객체 목록
+
 
         return "dashboard/dashboard_Show";
     }

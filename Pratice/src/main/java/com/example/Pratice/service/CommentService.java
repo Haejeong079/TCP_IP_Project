@@ -42,27 +42,31 @@ public class CommentService {
 
     @Transactional
     public void addComment(String commentText, Long id, Member sessionUser) {
-        // 시간 설정 코드
-        String currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        // LocalDateTime.now()를 직접 사용
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
-        // sessionUser의 정보를 사용하여 Member 조회
-        Optional<Member> memberOptional = memberRepository.findByNickname(sessionUser.getNickname());
-        if (!memberOptional.isPresent()) {
-            throw new RuntimeException("해당 닉네임의 사용자를 찾을 수 없습니다.");
-        }
-        Member member = memberOptional.get();
+        Member member = memberRepository.findByNickname(sessionUser.getNickname())
+                .orElseThrow(() -> new RuntimeException("해당 닉네임의 사용자를 찾을 수 없습니다."));
         DashBoard dashboard = dashboardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 대시보드를 찾을 수 없습니다."));
 
         Comment comment = Comment.builder()
                 .comment(commentText)
-                .member(member) // 댓글 작성자로 sessionUser의 Member 객체 사용
+                .member(member)
                 .dashBoard(dashboard)
-                .createDate(currentDateTime)
-                .modifiedDate(currentDateTime)
+                .createDate(currentDateTime)  // 직접 LocalDateTime.now() 사용
+                .modifiedDate(currentDateTime)  // 직접 LocalDateTime.now() 사용
                 .build();
         commentRepository.save(comment);
+
+        // 댓글 수 업데이트
+        DashBoard dashBoardEntity = dashboardRepository.findById(id).orElse(null);
+        if (dashBoardEntity != null) {
+            dashBoardEntity.setCommentCount(dashBoardEntity.getCommentCount() + 1);
+            dashboardRepository.save(dashBoardEntity); // 댓글 수 변경을 데이터베이스에 저장
+        }
     }
+
 
 
 
@@ -70,8 +74,24 @@ public class CommentService {
 
     public List<CommentDto> comments(Long dashboardId) {
         return commentRepository.findByDashBoard_Id(dashboardId).stream()
-                .map(comment -> new CommentDto(comment.getComment()))
+                .map(comment -> {
+                    String formattedCreateDate = comment.getCreateDate() != null
+                            ? comment.getCreateDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"))
+                            : "Not Available";
+                    String formattedModifiedDate = comment.getModifiedDate() != null
+                            ? comment.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"))
+                            : "Not Available";
+
+                    return new CommentDto(
+                            comment.getComment(),
+                            comment.getMember().getNickname(),
+                            formattedCreateDate,
+                            formattedModifiedDate
+                    );
+                })
                 .collect(Collectors.toList());
     }
+
+
 
 }

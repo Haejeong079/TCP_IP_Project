@@ -8,7 +8,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,16 +15,15 @@ import java.util.List;
 public class CommentDto {
     private Long id;
     private String memberNickname;
-    private DashBoard dashBoard;
-    private Member member;
     private String comment;
-    private String createDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
-    private String modifiedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));;
-    //private List<Comment> comments;
+    private String createDate; // 초기화 제거
+    private String modifiedDate; // 초기화 제거
 
-
-    public CommentDto(String comment) {
+    public CommentDto(String comment, String nickname, String createDate, String modifiedDate) {
         this.comment = comment;
+        this.memberNickname = nickname;
+        this.createDate = createDate; // 생성자를 통해 설정
+        this.modifiedDate = modifiedDate; // 생성자를 통해 설정
     }
-
 }
+

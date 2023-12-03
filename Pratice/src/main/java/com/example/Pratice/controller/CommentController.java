@@ -37,25 +37,17 @@ public class CommentController {
                              @PathVariable("id") Long id,
                              Model model,
                              HttpSession session) {
-        // 현재 로그인한 사용자를 세션에서 가져오기
         Member user = (Member) session.getAttribute("user");
 
-        String comments = commentService.findById(id).getComment();
-
         if (user == null) {
-            // 사용자가 로그인하지 않은 경우 에러 처리
-            // 예: 로그인 페이지로 리다이렉트
             return "redirect:/login";
         }
 
-        // 댓글 추가
         commentService.addComment(comment, id, user);
 
-        model.addAttribute("comments", comments);
-
-        // 리다이렉트 URL은 현재 보고 있는 게시글로
-        return "redirect:/dashboard/" + nickname + "/" + id;
+        return "redirect:/dashboard/" + nickname + "/" + id; // 닉네임 사용의 정확성 확인
     }
+
 
 
 

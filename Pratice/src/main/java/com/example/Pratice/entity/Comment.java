@@ -35,10 +35,19 @@ public class Comment {
 
     @Column(name = "create_date", updatable = false)
     @CreatedDate
-    private String createDate;
+    private LocalDateTime createDate;
 
     @Column(name = "modified_date")
     @LastModifiedDate
-    private String modifiedDate;
+    private LocalDateTime modifiedDate;
 
+    @PrePersist
+    protected void onCreate() {
+        createDate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modifiedDate = LocalDateTime.now();
+    }
 }
