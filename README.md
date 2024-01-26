@@ -1,7 +1,7 @@
 # Tcp Ip Term project 
 # Release notes
 
-주제 : 웹 간단한 게시판
+주제 : 간단한 웹 게시판
 
 현재 기능
 - 로그인 로그아웃
